@@ -1,10 +1,14 @@
 FROM alpine
 
-ENV HOME=/root
-ENV GOROOT=$HOME/.golang/go
-ENV GOPATH=$HOME/.golang/path
-ENV PATH=$PATH:$HOME/.golang/go/bin
-ENV GOROOT_BOOTSTRAP=$HOME/.golang/go1.4
+ARG HOME=/root
+ARG GOROOT=$HOME/.golang/go
+ARG GOPATH=$HOME/.golang/path
+ARG PATH=$PATH:$HOME/.golang/go/bin
+ARG GOROOT_BOOTSTRAP=$HOME/.golang/go1.4
+ENV MODULE=server
+
+# China mirrors
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
@@ -40,4 +44,6 @@ RUN set -ex && \
     cp $GOPATH/src/github.com/fatedier/frp/conf/* /frp && \
     rm -rf ~/.golang
 
-ENTRYPOINT [ "/frp/frps" , "-c" , "/frp/frps.ini" ]
+ADD entrypoint.sh /frp
+RUN ["chmod", "+x", "/frp/entrypoint.sh"]
+ENTRYPOINT ["/frp/entrypoint.sh"]
