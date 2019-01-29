@@ -1,21 +1,25 @@
-FROM centos
+FROM alpine
 
 ENV DNS_CN=119.29.29.29
 ENV DNS=208.67.222.222:5353
 
+ARG BUILD_DEPS=".build-deps build-base gcc git make bash g++ automake autoconf curl"
+
 # build tools
-RUN yum update -y && \
-    yum install git epel-release gcc gettext autoconf libtool automake make pcre-devel asciidoc xmlto c-ares-devel libev-devel libsodium-devel mbedtls-devel -y && \
+RUN set -ex && \
+        apk add --no-cache --virtual $BUILD_DEPS && \
     git clone https://github.com/shadowsocks/ChinaDNS.git /chinadns && \
     cd /chinadns && \
     ./autogen.sh && \
     ./configure && \
     make && \
     make install && \
-    yum remove -y git epel-release gcc gettext autoconf libtool automake make pcre-devel asciidoc xmlto c-ares-devel libev-devel libsodium-devel mbedtls-devel -y
+    rm -rf /chinadns && \
+    mkdir /chinadns && \
+    cd /chinadns && \
+    curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > chnroute.txt && \
+    apk del $BUILD_DEPS
 
-
-RUN curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > chnroute.txt
 ADD entrypoint.sh /chinadns
 RUN chmod +x /chinadns/entrypoint.sh
 ENTRYPOINT ["/chinadns/entrypoint.sh"]
