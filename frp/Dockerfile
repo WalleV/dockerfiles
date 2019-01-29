@@ -7,42 +7,33 @@ ARG PATH=$PATH:$HOME/.golang/go/bin
 ARG GOROOT_BOOTSTRAP=$HOME/.golang/go1.4
 ENV MODULE=server
 
+ARG BUILD_DEPS=".build-deps build-base gcc git make bash g++"
+
 # China mirrors
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 RUN set -ex && \
-    apk add --no-cache --virtual .build-deps \
-                                build-base \
-                                gcc \
-                                git \
-                                make \
-                                bash \
-                                g++ && \
-    git clone https://github.com/golang/go.git ~/.golang/go && \
-    cd ~/.golang && \
+    apk add --no-cache --virtual $BUILD_DEPS && \
+    git clone https://github.com/golang/go.git $GOROOT && \
+    cd $GOROOT/.. && \
     cp -r go go1.4 && \
-    cd ~/.golang/go1.4 && \
+    cd $GOROOT_BOOTSTRAP && \
     git checkout release-branch.go1.4 && \
     cd src && \
     ./make.bash && \
-    cd ~/.golang/go && \
+    cd $GOROOT && \
     git checkout release-branch.go1.11 && \
     cd src && \
     ./make.bash && \
+    export PATH=$PATH:$HOME/.golang/go/bin && \
     git clone https://github.com/fatedier/frp.git $GOPATH/src/github.com/fatedier/frp && \
     cd $GOPATH/src/github.com/fatedier/frp && \
     make && \
-    apk del .build-deps \
-            build-base \
-            gcc \
-            git \
-            make \
-            bash \
-            g++ && \
+    apk del $BUILD_DEPS && \
     mkdir /frp && \
     cp $GOPATH/src/github.com/fatedier/frp/bin/frp* /frp && \
     cp $GOPATH/src/github.com/fatedier/frp/conf/* /frp && \
-    rm -rf ~/.golang
+    rm -rf $HOME/.golang
 
 ADD entrypoint.sh /frp
 RUN ["chmod", "+x", "/frp/entrypoint.sh"]
