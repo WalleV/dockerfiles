@@ -5,7 +5,9 @@ ENV DNS=208.67.222.222:5353
 
 ARG BUILD_DEPS=".build-deps build-base gcc git make bash g++ automake autoconf curl"
 
-# build tools
+# China mirrors
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+
 RUN set -ex && \
         apk add --no-cache --virtual $BUILD_DEPS && \
     git clone https://github.com/shadowsocks/ChinaDNS.git /chinadns && \
@@ -17,7 +19,7 @@ RUN set -ex && \
     rm -rf /chinadns && \
     mkdir /chinadns && \
     cd /chinadns && \
-    curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > chnroute.txt && \
+    curl 'https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > chnroute.txt && \
     apk del $BUILD_DEPS
 
 ADD entrypoint.sh /chinadns
