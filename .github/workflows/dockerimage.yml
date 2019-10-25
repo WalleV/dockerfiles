@@ -1,7 +1,10 @@
 name: Docker Image CI
 
-on: [push]
-
+on: 
+  push:
+    branches: 
+      - master
+      - beta
 jobs:
 
   build:
@@ -13,7 +16,8 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: coolcoffee/frp-action-test
+        name: coolcoffee/frp
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         workdir: ./frp
+        tag_names: true
