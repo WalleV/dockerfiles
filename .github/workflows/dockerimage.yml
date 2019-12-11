@@ -7,10 +7,8 @@ on:
       - dev
 jobs:
 
-  build:
-
+  build-frp:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Publish to Registry
@@ -20,4 +18,17 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         workdir: ./frp
+        tag_names: true
+
+  build-elasticsearch:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: coolcoffee/elasticsearch
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        workdir: ./elasticsearch
         tag_names: true
