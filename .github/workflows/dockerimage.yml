@@ -1,8 +1,8 @@
 name: Docker Image CI
 
-on: 
+on:
   push:
-    branches: 
+    branches:
       - master
       - dev
 jobs:
@@ -32,3 +32,16 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         workdir: ./elasticsearch
         tag_names: true
+
+  build-kibana:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: coolcoffee/kibana
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: ./kibana
+          tag_names: true
