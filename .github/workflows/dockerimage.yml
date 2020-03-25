@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - dev
+      - ss-v2ray-plugin
 jobs:
 
   build-ss:

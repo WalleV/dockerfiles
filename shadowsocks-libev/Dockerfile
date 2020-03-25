@@ -27,6 +27,7 @@ RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
                                 autoconf \
                                 build-base \
+                                wget \
                                 curl \
                                 libev-dev \
                                 libtool \
@@ -52,17 +53,12 @@ RUN set -ex && \
     ./configure --prefix=/usr --disable-documentation && \
     make install && \
     cd .. && \
-
     rm -rf /tmp/* && \
-
+    
     cd /tmp && \
-    git clone https://github.com/shadowsocks/simple-obfs.git && \
-    cd simple-obfs && \
-    git submodule update --init --recursive && \
-    ./autogen.sh && \
-    ./configure && make && \
-    make install && \
-
+    wget https://github.com/shadowsocks/v2ray-plugin/releases/download/v1.3.0/v2ray-plugin-linux-amd64-v1.3.0.tar.gz && \
+    tar -zvxf v2ray-plugin-linux-amd64-v1.3.0.tar.gz && \
+    mv v2ray-plugin_linux_amd64 /usr/bin/v2ray-plugin  && \
     runDeps="$( \
         scanelf --needed --nobanner /usr/bin/ss-* \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
