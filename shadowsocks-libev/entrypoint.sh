@@ -8,7 +8,6 @@ if [ "$MODULE" = "ss-local" ];then
             -l $LOCAL_PORT \
             -m $METHOD \
             -t $TIMEOUT \
-            --fast-open  \
             -a $USER \
             --plugin v2ray-plugin \
             --plugin-opts "host=intl.aliyun.com" \
