@@ -6,6 +6,7 @@ on:
       - master
       - dev
       - ss-v2ray-plugin
+      - snell-v2.0.0
 jobs:
 
   build-ss:
@@ -58,4 +59,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./kibana
+          tag_names: true
+
+  build-snell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: coolcoffee/snell
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: ./snell
           tag_names: true
