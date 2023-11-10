@@ -1,0 +1,25 @@
+FROM codercom/code-server:4.18.0
+
+USER root
+
+RUN apt update && apt install -y \
+    curl \
+    unzip \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN wget https://releases.hashicorp.com/terraform/1.6.3/terraform_1.6.3_linux_amd64.zip \
+    && unzip terraform_1.6.3_linux_amd64.zip \
+    && mv terraform /usr/local/bin/ \
+    && rm terraform_1.6.3_linux_amd64.zip
+
+RUN wget https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz \
+    && tar -zxvf helm-v3.13.2-linux-amd64.tar.gz \
+    && mv linux-amd64/helm /usr/local/bin/ \
+    && rm -rf linux-amd64 \
+    && rm helm-v3.13.2-linux-amd64.tar.gz
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && sudo ./aws/install \
+    && rm awscliv2.zip
