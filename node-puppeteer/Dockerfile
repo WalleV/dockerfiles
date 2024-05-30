@@ -1,4 +1,4 @@
-FROM node:20eye-slim
+FROM node:20-bullseye-slim
     
 # 设置环境变量以避免在安装过程中出现问题
 ENV DEBIAN_FRONTEND noninteractive
